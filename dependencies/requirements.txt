@@ -1,0 +1,14 @@
+# General Dependencies for Booking Bot
+# Configuration and environment
+pyyaml>=6.0
+python-dotenv>=0.19.0
+
+# Development and testing
+pytest>=7.0.0
+pytest-cov>=4.0.0
+
+# Logging and utilities
+colorama>=0.4.4
+
+# Note: For logistic regression components, install: pip install -r requirements-logistic-regression.txt
+# Note: For GPT-2 components, install: pip install -r requirements-gpt2.txt
