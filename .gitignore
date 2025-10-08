@@ -1,0 +1,37 @@
+# Config files with sensitive data
+backend/config/config.php
+config/config.php
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+error_log
+access_log
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+
+# PHP
+vendor/
+composer.lock
+
+# Session files
+sessions/
+
+# Backup files
+*.bak
+*.backup
+*~
