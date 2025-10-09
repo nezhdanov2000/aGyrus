@@ -111,7 +111,20 @@
         }
         
         chat.appendChild(wrap);
-        chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+        setTimeout(() => {
+            const scrollHeight = Math.max(
+                document.body.scrollHeight,
+                document.documentElement.scrollHeight,
+                document.body.offsetHeight,
+                document.documentElement.offsetHeight,
+                document.body.clientHeight,
+                document.documentElement.clientHeight
+            );
+            window.scrollTo({
+                top: scrollHeight,
+                behavior: 'smooth'
+            });
+        }, 100);
     }
 
     function showMainMenu() {
@@ -326,6 +339,22 @@
         
         appendUserBubble(text);
         input.value = '';
+        
+        // Auto scroll to bottom after sending message
+        setTimeout(() => {
+            const scrollHeight = Math.max(
+                document.body.scrollHeight,
+                document.documentElement.scrollHeight,
+                document.body.offsetHeight,
+                document.documentElement.offsetHeight,
+                document.body.clientHeight,
+                document.documentElement.clientHeight
+            );
+            window.scrollTo({
+                top: scrollHeight,
+                behavior: 'smooth'
+            });
+        }, 100);
 
         switch (dialogState) {
             case 'searching_tutor':

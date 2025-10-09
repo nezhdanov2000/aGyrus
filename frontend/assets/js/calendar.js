@@ -201,23 +201,24 @@
         const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
         const timeslots = calendarData[dateKey] || [];
         
-        // Create timeslot elements
+        // Create timeslot elements - only show student's own bookings
         timeslots.forEach(timeslot => {
-            const timeslotEl = document.createElement('div');
             const isMine = myBookingsByTimeslotId.has(Number(timeslot.timeslot_id)) || (currentStudentId && Number(timeslot.student_id) === currentStudentId);
-            const stateClass = isMine ? 'mine' : (timeslot.is_booked ? 'booked' : 'available');
-            timeslotEl.className = `timeslot ${stateClass}`;
             
+            // Only display timeslots that belong to the current student
+            if (!isMine) {
+                return; // Skip this timeslot if it's not mine
+            }
+            
+            const timeslotEl = document.createElement('div');
+            timeslotEl.className = 'timeslot mine';
             
             let timeslotContent = `
                 <div class="timeslot-time">${timeslot.start_time} / ${timeslot.end_time}</div>
                 <div class="timeslot-tutor">👨‍🏫 ${timeslot.tutor_name}</div>
                 <div class="timeslot-course">📚 ${timeslot.course_name || 'No course'}</div>
+                <div class="timeslot-student">👤 Your booking</div>
             `;
-            
-            if (!isMine && timeslot.is_booked) {
-                timeslotContent += `<div class="timeslot-student">👤 ${timeslot.student_name}</div>`;
-            }
             
             timeslotEl.innerHTML = timeslotContent;
             
@@ -237,22 +238,19 @@
     
     // Handle timeslot click
     function handleTimeslotClick(dateKey, timeslot) {
-        console.log(`🕐 Timeslot clicked: ${dateKey}`, timeslot);
+        console.log(`🕐 My booking clicked: ${dateKey}`, timeslot);
         
-        let message = `Timeslot: ${dateKey}\n`;
+        let message = `Your Booking: ${dateKey}\n`;
         message += `Time: ${timeslot.start_time} - ${timeslot.end_time}\n`;
         message += `Tutor: ${timeslot.tutor_name}\n`;
         message += `Course: ${timeslot.course_name || 'No course'}\n`;
+        message += `Status: Your booking\n`;
+        message += `\nWould you like to cancel this booking?`;
         
-        if (timeslot.is_booked) {
-            message += `Status: Booked by ${timeslot.student_name}\n`;
-            message += `\nThis timeslot is already booked.`;
-        } else {
-            message += `Status: Available\n`;
-            message += `\nThis timeslot is available for booking.`;
+        if (confirm(message)) {
+            // In a real app, this would make an API call to cancel the booking
+            alert('This would cancel your booking.\n\nIn a real app, this would make an API call to the backend to cancel the booking.');
         }
-        
-        alert(message);
     }
     
     // Clear all timeslots

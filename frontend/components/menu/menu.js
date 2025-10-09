@@ -22,7 +22,6 @@ class PopupMenu {
         this.closeMenuBtn = document.getElementById(this.options.closeMenuBtnId);
         this.popupMenu = document.getElementById(this.options.popupMenuId);
         this.menuOverlay = document.getElementById(this.options.menuOverlayId);
-        this.menuItems = document.querySelectorAll('.menu-item');
         
         if (!this.menuBtn || !this.popupMenu) {
             console.warn('PopupMenu: Required elements not found');
@@ -30,6 +29,7 @@ class PopupMenu {
         }
         
         this.bindEvents();
+        this.setActiveByCurrentPage();
     }
     
     bindEvents() {
@@ -45,12 +45,18 @@ class PopupMenu {
             this.menuOverlay.addEventListener('click', () => this.close());
         }
         
+        // Handle exit button click
+        const exitBtn = document.querySelector('.menu-exit');
+        if (exitBtn) {
+            exitBtn.addEventListener('click', () => this.handleExit());
+        }
+        
         // Handle menu item clicks
-        this.menuItems.forEach(item => {
-            item.addEventListener('click', (e) => {
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.menu-item')) {
                 e.preventDefault();
-                this.handleMenuItemClick(item);
-            });
+                this.handleMenuItemClick(e.target.closest('.menu-item'));
+            }
         });
         
         // Handle escape key
@@ -79,11 +85,18 @@ class PopupMenu {
         this.isOpen = false;
     }
     
+    handleExit() {
+        console.log('🚪 Exit button clicked');
+        // Redirect to logout endpoint
+        window.location.href = '../../backend/api/logout.php';
+    }
+    
     handleMenuItemClick(item) {
         console.log('🖱️ Menu item clicked:', item);
         
         // Remove active class from all items
-        this.menuItems.forEach(i => i.classList.remove('active'));
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(i => i.classList.remove('active'));
         
         // Add active class to clicked item
         item.classList.add('active');
@@ -113,11 +126,11 @@ class PopupMenu {
         
         switch(section) {
             case 'personal':
-                if (currentPage !== 'personal') {
-                    console.log('➡️ Navigating to personal.html');
-                    window.location.href = 'personal.html';
+                if (currentPage !== 'personal-data') {
+                    console.log('➡️ Navigating to personal-data.html');
+                    window.location.href = 'personal-data.html';
                 } else {
-                    console.log('📍 Already on personal page');
+                    console.log('📍 Already on personal data page');
                 }
                 break;
             case 'calendar':
@@ -129,9 +142,9 @@ class PopupMenu {
                 }
                 break;
             case 'find-tutors':
-                if (currentPage !== 'find-tutors') {
-                    console.log('➡️ Navigating to find-tutors.html');
-                    window.location.href = 'find-tutors.html';
+                if (currentPage !== 'find_tutors') {
+                    console.log('➡️ Navigating to find_tutors.html');
+                    window.location.href = 'find_tutors.html';
                 } else {
                     console.log('📍 Already on find-tutors page');
                 }
@@ -164,9 +177,34 @@ class PopupMenu {
         return filename;
     }
     
+    // Set active menu item based on current page
+    setActiveByCurrentPage() {
+        const page = this.getCurrentPage();
+        const pageToSection = {
+            'personal-data': 'personal',
+            'calendar': 'calendar',
+            'find_tutors': 'find-tutors',
+            'my-tutors': 'my-tutors',
+            'chat': 'ai'
+        };
+        
+        const section = pageToSection[page];
+        if (section) {
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.section === section) {
+                    item.classList.add('active');
+                }
+            });
+            console.log(`✅ Active menu set to: ${section} for page: ${page}`);
+        }
+    }
+    
     // Public methods for external control
     setActiveSection(section) {
-        this.menuItems.forEach(item => {
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
             item.classList.remove('active');
             if (item.dataset.section === section) {
                 item.classList.add('active');
@@ -205,7 +243,7 @@ async function loadMenuComponent() {
     console.log('🔄 Loading menu component...');
     
     try {
-        const response = await fetch('../components/menu/menu.html');
+        const response = await fetch('../components/menu/menu.html?v=' + Date.now());
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
@@ -237,11 +275,6 @@ async function loadMenuComponent() {
 document.addEventListener('DOMContentLoaded', function() {
     // Try to load menu component first
     loadMenuComponent();
-    
-    // Fallback: initialize if elements already exist
-    if (document.getElementById('popupMenu') && document.getElementById('menuBtn')) {
-        window.popupMenu = new PopupMenu();
-    }
 });
 
 // Export for module systems

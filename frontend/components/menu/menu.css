@@ -1,3 +1,10 @@
+/* Sticky Header Styles */
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
 /* Popup Menu Component Styles */
 .popup-menu {
     position: fixed;
@@ -12,6 +19,7 @@
     transition: transform 0.3s ease-in-out;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .popup-menu.open {
@@ -74,48 +82,17 @@
     justify-content: center;
 }
 
-.logo-shapes {
-    position: relative;
-    width: 40px;
-    height: 40px;
-}
-
-.shape {
-    position: absolute;
-    border-radius: 4px;
-}
-
-.shape-1 {
-    width: 20px;
-    height: 20px;
-    background: #ff6b35;
-    top: 0;
-    left: 0;
-    z-index: 3;
-}
-
-.shape-2 {
-    width: 16px;
-    height: 16px;
-    background: #4a90e2;
-    top: 8px;
-    left: 12px;
-    z-index: 2;
-}
-
-.shape-3 {
-    width: 12px;
-    height: 12px;
-    background: #7ed321;
-    top: 16px;
-    left: 20px;
-    z-index: 1;
+.logo-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
 }
 
 /* Menu Navigation */
 .menu-nav {
     flex: 1;
     padding: 20px 0;
+    overflow: hidden;
 }
 
 .menu-item {
@@ -139,6 +116,8 @@
 .menu-item.active {
     background: #4a90e2;
     color: #000;
+    position: relative;
+    overflow: hidden;
 }
 
 .menu-icon {

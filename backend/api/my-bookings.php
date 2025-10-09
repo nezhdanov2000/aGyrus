@@ -25,7 +25,7 @@ try {
     $stmt = $pdo->prepare("
         SELECT b.booking_id, b.booking_date,
                t.timeslot_id, t.tutor_id, t.date, bt.start_time, bt.end_time,
-               tu.name as tutor_name, tu.surname as tutor_surname,
+               tu.name as tutor_name, tu.surname as tutor_surname, tu.photo_link,
                c.course_name
         FROM booking b
         JOIN timeslot t ON b.timeslot_id = t.timeslot_id

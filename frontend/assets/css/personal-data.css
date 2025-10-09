@@ -1,0 +1,171 @@
+/* Styles aligned with app design */
+:root {
+    --white: #fff;
+    --muted: #3c4043;
+    --text: #111;
+    --radius: 14px;
+    --shadow: 0 2px 6px rgba(0,0,0,0.08);
+    --header-bg: #2c3e50;
+    --footer-bg: #e67e22;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #bfe6ff 0%, #f3f7fb 35%, #ffe2cf 70%, #ffb07a 100%);
+}
+
+.app-header {
+    height: 56px;
+    background: var(--header-bg);
+    color: var(--white);
+    display: grid;
+    grid-template-columns: 56px 1fr 56px;
+    align-items: center;
+}
+
+.app-header .title {
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: .5px;
+    font-size: 18px;
+}
+
+.icon-btn {
+    background: transparent;
+    color: var(--white);
+    border: 0;
+    width: 56px;
+    height: 56px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.content {
+    flex: 1;
+    padding: 16px;
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.section-header {
+    background: #ffe2cf;
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-icon {
+    font-size: 18px;
+}
+
+.section-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text);
+}
+
+.info-section, .records-section {
+    margin-bottom: 20px;
+}
+
+.info-content {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: center;
+}
+
+.user-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+}
+
+.user-photo img {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.records-content {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 16px;
+}
+
+.app-footer {
+    background: var(--footer-bg);
+    color: var(--white);
+    text-align: center;
+    padding: 12px 16px;
+}
+
+.app-footer p {
+    margin: 0;
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .content {
+        padding: 12px;
+    }
+    
+    .info-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 12px;
+    }
+    
+    .user-photo img {
+        width: 60px;
+        height: 60px;
+    }
+}

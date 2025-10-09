@@ -3,13 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Gyrus AI - Tutors</title>
+    <title>Gyrus AI - My Tutors</title>
     <link rel="stylesheet" href="../components/menu/menu.css">
-    <link rel="stylesheet" href="../assets/css/find-tutors.css">
+    <link rel="stylesheet" href="../assets/css/my-tutors.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23222'/><text x='50' y='58' font-size='44' text-anchor='middle' fill='%23fff'>G</text></svg>">
-
     <script src="../components/menu/menu.js?v=1" defer></script>
-    <script src="../assets/js/find-tutors.js" defer></script>
+    <script src="../assets/js/my-tutors.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const exitBtn = document.getElementById('exitBtn');
@@ -24,29 +23,27 @@
 <body>
     <div class="app">
         <header class="app-header">
-            <button class="icon-btn" id="menuBtn" aria-label="Menu" title="Menu">
-                <span class="icon">☰</span>
-            </button>
-            <div class="title">Tutors</div>
-            <button class="icon-btn" id="exitBtn" aria-label="Exit" title="Exit">
-                <span class="icon">⏻</span>
-            </button>
+            <button class="icon-btn" id="menuBtn" aria-label="Menu" title="Menu"><span class="icon">☰</span></button>
+            <div class="title">My Tutors</div>
+            <button class="icon-btn" id="exitBtn" aria-label="Exit" title="Exit"><span class="icon">⏻</span></button>
         </header>
 
         <main class="content">
-            <div class="search-box">
-                <input id="searchInput" type="text" placeholder="Walter" />
-                <button id="searchBtn" class="search-btn" aria-label="Search">🔎</button>
-            </div>
-
-            <section id="results" class="results"></section>
+            <section id="list" class="list"></section>
         </main>
 
         <footer class="app-footer">
             <p>This is open source project created by Gleb Nezhdanov</p>
         </footer>
-
         <div id="menu-container"></div>
+
+        <div id="floating-panel" class="floating hidden">
+            <button class="icon circle" id="notifyBtn">✉️</button>
+            <div class="hint">send a notification to a tutor that you need help</div>
+            <button class="icon circle danger" id="cancelAllBtn">✖️</button>
+            <div class="hint">cancel all the classes and remove from the favorite list</div>
+            <button class="close" id="closeFloating">✖️</button>
+        </div>
     </div>
 </body>
 </html>
