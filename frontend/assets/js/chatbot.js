@@ -1,15 +1,38 @@
 // Interactive chatbot with appointment booking functionality
 (function () {
-    const input = document.getElementById('messageInput');
-    const sendBtn = document.getElementById('sendBtn');
-    const chat = document.querySelector('.chat');
-    
     // Dialog state management
     let dialogState = 'idle';
     let currentData = {};
     
     // API base URL
-    const API_BASE = '/backend/api/';
+    const API_BASE = '../../backend/api/';
+    
+    // DOM elements (will be initialized when DOM is ready)
+    let input, sendBtn, chat;
+    
+    // Handle menu section navigation
+    function handleMenuSection(section) {
+        switch(section) {
+            case 'personal':
+                showMainMenu('Personal data management');
+                break;
+            case 'calendar':
+                // Navigate to calendar page
+                window.location.href = 'calendar.html';
+                break;
+            case 'find-tutors':
+                startTutorSearch();
+                break;
+            case 'my-tutors':
+                showMyBookings();
+                break;
+            case 'ai':
+                showMainMenu('AI Assistant');
+                break;
+            default:
+                showMainMenu('Welcome to Gyrus AI');
+        }
+    }
     
     // Load user data on page load
     function loadUserData() {
@@ -26,16 +49,13 @@
                 } else {
                     console.error('User not authenticated:', data.error);
                     // Redirect to login if not authenticated
-                    window.location.href = '/frontend/html/index.html';
+                    window.location.href = 'index.html';
                 }
             })
             .catch(error => {
                 console.error('Error loading user data:', error);
             });
     }
-    
-    // Load user data immediately
-    loadUserData();
 
     function appendUserBubble(text) {
         const wrap = document.createElement('div');
@@ -57,7 +77,7 @@
         const wrap = document.createElement('div');
         wrap.className = 'bubble bot';
         wrap.innerHTML = '<div class="content"></div>' +
-            '<img class="agent" src="/frontend/assets/images/logo.png" alt="Agent"/>';
+            '<img class="agent" src="../assets/images/logo.png" alt="Agent"/>';
         
         const content = wrap.querySelector('.content');
         content.textContent = text;
@@ -198,17 +218,11 @@
     function bookTimeslot(timeslot) {
         appendUserBubble(`${timeslot.start_time} - ${timeslot.end_time}`);
         
-        // Get the first course ID from tutor's courses
-        const courseId = currentData.selectedTutor.course_ids 
-            ? parseInt(currentData.selectedTutor.course_ids.split(',')[0].trim())
-            : 1;
-        
         fetch(API_BASE + 'book-timeslot.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                timeslot_id: timeslot.timeslot_id,
-                course_id: courseId
+                timeslot_id: timeslot.timeslot_id
             })
         })
         .then(response => response.json())
@@ -332,20 +346,55 @@
 
     // Initialize chatbot
     function init() {
+        console.log('🎯 Initializing chatbot...');
         showMainMenu();
+        console.log('✅ Main menu shown');
+        
+        // Initialize popup menu with custom handler
+        if (window.PopupMenu) {
+            window.popupMenu = new PopupMenu({
+                onSectionChange: handleMenuSection
+            });
+            console.log('✅ Popup menu initialized');
+        } else {
+            console.warn('⚠️ PopupMenu class not found');
+        }
     }
 
-    // Event listeners
-    sendBtn.addEventListener('click', handleSend);
-    input.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 DOM loaded, initializing chatbot...');
+        
+        // Initialize DOM elements
+        input = document.getElementById('messageInput');
+        sendBtn = document.getElementById('sendBtn');
+        chat = document.querySelector('.chat');
+        
+        console.log('📋 DOM elements:', { input, sendBtn, chat });
+        
+        // Check if elements exist
+        if (!input || !sendBtn || !chat) {
+            console.error('❌ Required DOM elements not found:', { input, sendBtn, chat });
+            return;
         }
-    });
+        
+        console.log('✅ All DOM elements found');
+        
+        // Event listeners
+        sendBtn.addEventListener('click', handleSend);
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
 
-    // Start the chatbot
-    init();
+        // Load user data first
+        loadUserData();
+        
+        // Start the chatbot
+        init();
+    });
 })();
 
 

@@ -26,7 +26,6 @@ CREATE TABLE student (
     photo_link VARCHAR(255)
 );
 
--- Базовые таймслоты без привязки к репетитору
 CREATE TABLE base_timeslot (
     base_timeslot_id INT AUTO_INCREMENT PRIMARY KEY,
     day_of_week VARCHAR(20) NOT NULL,
@@ -35,19 +34,19 @@ CREATE TABLE base_timeslot (
     UNIQUE KEY unique_time_slot (day_of_week, start_time, end_time)
 );
 
--- Конкретные таймслоты, создаваемые репетиторами
 CREATE TABLE timeslot (
     timeslot_id INT AUTO_INCREMENT PRIMARY KEY,
     base_timeslot_id INT,
     tutor_id INT,
+    course_id INT, 
     date DATE NOT NULL,
-    status ENUM('available', 'booked') DEFAULT 'available', -- Only available or booked; cancelled bookings make timeslot available again
+    status ENUM('available', 'booked') DEFAULT 'available', 
     FOREIGN KEY (base_timeslot_id) REFERENCES base_timeslot(base_timeslot_id),
     FOREIGN KEY (tutor_id) REFERENCES tutor(tutor_id),
+    FOREIGN KEY (course_id) REFERENCES course(course_id),
     UNIQUE KEY unique_tutor_timeslot (tutor_id, date, base_timeslot_id)
 );
 
--- Junction tables for many-to-many relationships
 CREATE TABLE tutor_course (
     tutor_id INT,
     course_id INT,
@@ -56,17 +55,13 @@ CREATE TABLE tutor_course (
     FOREIGN KEY (course_id) REFERENCES course(course_id)
 );
 
--- Студенты записываются на таймслоты
 CREATE TABLE booking (
     booking_id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT,
     timeslot_id INT,
-    course_id INT, -- На какой курс записывается студент
     booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- No status field: if booking exists, it's active; cancelled bookings are deleted
     FOREIGN KEY (student_id) REFERENCES student(student_id),
     FOREIGN KEY (timeslot_id) REFERENCES timeslot(timeslot_id),
-    FOREIGN KEY (course_id) REFERENCES course(course_id),
     UNIQUE KEY unique_student_timeslot (student_id, timeslot_id)
 );
 
@@ -107,12 +102,22 @@ INSERT INTO tutor_course (tutor_id, course_id) VALUES
 (2, 4),
 (3, 5), (3, 1);
 
--- Timeslots (next week sample). Adjust dates as needed.
--- Assuming the next Monday is 2025-10-13 for example; replace with current next dates.
-INSERT INTO timeslot (base_timeslot_id, tutor_id, date, status) VALUES
-(1, 1, DATE_ADD(CURDATE(), INTERVAL 7 DAY), 'available'),
-(2, 1, DATE_ADD(CURDATE(), INTERVAL 7 DAY), 'available'),
-(3, 2, DATE_ADD(CURDATE(), INTERVAL 8 DAY), 'available'),
-(4, 3, DATE_ADD(CURDATE(), INTERVAL 9 DAY), 'available'),
-(5, 3, DATE_ADD(CURDATE(), INTERVAL 11 DAY), 'available');
+-- Timeslots sample data
+INSERT INTO timeslot (base_timeslot_id, tutor_id, course_id, date, status) VALUES
+-- Walter: занятия на 3 октября 2025
+(1, 1, 1, '2025-10-03', 'available'),  -- Walter: Math (09:00-10:00)
+(2, 1, 1, '2025-10-03', 'available'),  -- Walter: Math (10:00-11:00)
+(3, 1, 1, '2025-10-03', 'available'),  -- Walter: Math (14:00-15:00)
+(4, 1, 1, '2025-10-03', 'available'),  -- Walter: Math (09:00-10:00)
+(5, 1, 1, '2025-10-03', 'available'),  -- Walter: Math (16:00-17:00)
+-- Walter: Multiple Math sessions (будущие даты)
+(1, 1, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY), 'available'),  -- Walter: Math (09:00)
+(2, 1, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY), 'available'),  -- Walter: Math (10:00)
+(3, 1, 1, DATE_ADD(CURDATE(), INTERVAL 2 DAY), 'available'),  -- Walter: Math (14:00)
+(4, 1, 1, DATE_ADD(CURDATE(), INTERVAL 3 DAY), 'available'),  -- Walter: Math (09:00)
+(5, 1, 1, DATE_ADD(CURDATE(), INTERVAL 4 DAY), 'available'),  -- Walter: Math (16:00)
+-- Other tutors
+(3, 2, 4, DATE_ADD(CURDATE(), INTERVAL 8 DAY), 'available'),  -- Emily: Biology
+(4, 3, 5, DATE_ADD(CURDATE(), INTERVAL 9 DAY), 'available'),  -- Ada: Computer Science
+(5, 3, 1, DATE_ADD(CURDATE(), INTERVAL 11 DAY), 'available'); -- Ada: Math
 

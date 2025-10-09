@@ -83,6 +83,7 @@ body {
     .prompt input { font-size: 16px; }
 }
 
+
 @media (max-width: 360px) {
     /* Further reduce icon size and offsets on very small screens */
     .bubble .avatar, .bubble .agent { bottom: -4px; }

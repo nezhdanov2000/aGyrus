@@ -18,10 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $input = json_decode(file_get_contents('php://input'), true);
 $timeslotId = (int)($input['timeslot_id'] ?? 0);
-$courseId = (int)($input['course_id'] ?? 0);
 
-if ($timeslotId <= 0 || $courseId <= 0) {
-    echo json_encode(['success' => false, 'error' => 'Valid timeslot_id and course_id are required']);
+if ($timeslotId <= 0) {
+    echo json_encode(['success' => false, 'error' => 'Valid timeslot_id is required']);
     exit;
 }
 
@@ -58,10 +57,10 @@ try {
     
     // Create booking
     $stmt = $pdo->prepare("
-        INSERT INTO booking (student_id, timeslot_id, course_id) 
-        VALUES (?, ?, ?)
+        INSERT INTO booking (student_id, timeslot_id) 
+        VALUES (?, ?)
     ");
-    $stmt->execute([$studentId, $timeslotId, $courseId]);
+    $stmt->execute([$studentId, $timeslotId]);
     $bookingId = $pdo->lastInsertId();
     
     // Update timeslot status to booked

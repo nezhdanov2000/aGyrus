@@ -1,0 +1,333 @@
+/* Calendar Styles */
+:root {
+    --bg-top: #bfe6ff;
+    --bg-mid: #f3f7fb;
+    --bg-low: #ffe2cf;
+    --bg-bottom: #ffb07a;
+    --text: #111;
+    --muted: #3c4043;
+    --white: #fff;
+    --shadow: 0 2px 6px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.18);
+    --radius: 14px;
+    --header-bg: #2c3e50;
+    --month-nav-bg: #3498db;
+    --footer-bg: #e67e22;
+    --clear-btn-bg: #2980b9;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 35%, var(--bg-low) 70%, var(--bg-bottom) 100%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+}
+
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.app-header {
+    height: 56px;
+    background: var(--header-bg);
+    color: var(--white);
+    display: grid;
+    grid-template-columns: 56px 1fr 56px;
+    align-items: center;
+    padding: 0;
+}
+
+.app-header .title {
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: .5px;
+    font-size: 18px;
+}
+
+.icon-btn {
+    background: transparent;
+    color: var(--white);
+    border: 0;
+    width: 56px;
+    height: 56px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Month Navigation */
+.month-nav {
+    background: var(--month-nav-bg);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-btn {
+    background: var(--white);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--month-nav-bg);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease;
+}
+
+.nav-btn:hover {
+    transform: scale(1.05);
+}
+
+.nav-btn:active {
+    transform: scale(0.95);
+}
+
+.month-title {
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--white);
+    text-transform: lowercase;
+    letter-spacing: 1px;
+}
+
+/* Calendar Grid */
+.calendar-grid {
+    flex: 1;
+    padding: 20px 16px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius);
+    margin: 0 16px;
+}
+
+.day-column {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: var(--radius);
+    padding: 12px 8px;
+    min-height: 200px;
+}
+
+.day-header {
+    text-align: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.day-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.day-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 2px;
+}
+
+.timeslots {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.timeslot {
+    background: var(--white);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 11px;
+    color: var(--text);
+    text-align: left;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 6px;
+}
+
+.timeslot:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.timeslot:active {
+    transform: translateY(0);
+}
+
+.timeslot.available {
+    border-left: 4px solid #27ae60;
+}
+
+.timeslot.booked {
+    border-left: 4px solid #e74c3c;
+    background: #fdf2f2;
+}
+
+.timeslot.mine {
+    border-left: 4px solid #2e7d32;
+    background: #e8f5e9;
+}
+
+.timeslot-time {
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.timeslot-tutor,
+.timeslot-course,
+.timeslot-student {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.1;
+    margin-bottom: 1px;
+}
+
+.timeslot-student {
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+/* Action Section */
+.action-section {
+    padding: 20px 16px;
+    display: flex;
+    justify-content: center;
+}
+
+.clear-btn {
+    background: var(--clear-btn-bg);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: all 0.2s ease;
+    text-transform: lowercase;
+    letter-spacing: 0.5px;
+}
+
+.clear-btn:hover {
+    background: #1f5f8b;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.clear-btn:active {
+    transform: translateY(0);
+}
+
+/* Footer */
+.app-footer {
+    background: var(--footer-bg);
+    color: var(--white);
+    padding: 12px 16px;
+    text-align: center;
+}
+
+.app-footer p {
+    margin: 0;
+    font-size: 12px;
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .calendar-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+    
+    .day-column {
+        padding: 10px 6px;
+    }
+    
+    .day-name {
+        font-size: 12px;
+    }
+    
+    .day-number {
+        font-size: 14px;
+    }
+    
+    .timeslot {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin: 0 12px;
+    }
+    
+    .day-column {
+        min-height: auto;
+        padding: 16px 12px;
+    }
+    
+    .month-nav {
+        padding: 12px 16px;
+    }
+    
+    .month-title {
+        font-size: 20px;
+    }
+    
+    .nav-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin: 0 8px;
+        padding: 16px 8px;
+    }
+    
+    .day-column {
+        padding: 12px 8px;
+    }
+    
+    .timeslot {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+    
+    .clear-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+

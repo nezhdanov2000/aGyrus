@@ -5,12 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gyrus AI - Chatbot</title>
     <link rel="stylesheet" href="../assets/css/chatbot.css">
+    <link rel="stylesheet" href="../components/menu/menu.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23222'/><text x='50' y='58' font-size='44' text-anchor='middle' fill='%23fff'>G</text></svg>">
+    
+    <!-- Scripts -->
+    <script src="../components/menu/menu.js"></script>
+    <script src="../assets/js/chatbot.js"></script>
 </head>
 <body>
     <div class="app">
         <header class="app-header">
-            <button class="icon-btn" aria-label="Menu" title="Menu">
+            <button class="icon-btn" id="menuBtn" aria-label="Menu" title="Menu">
                 <span class="icon">☰</span>
             </button>
             <div class="title">Gyrus AI</div>
@@ -18,6 +23,9 @@
                 <span class="icon">🗂</span>
             </button>
         </header>
+
+        <!-- Popup Menu Component -->
+        <div id="menu-container"></div>
 
         <main class="chat">
             <div class="bubble user">
@@ -48,8 +56,6 @@
             <div class="footer-note">This is open source project created by Gleb Nezhdanov</div>
         </footer>
     </div>
-
-    <script src="../assets/js/chatbot.js"></script>
 </body>
 </html>
 
