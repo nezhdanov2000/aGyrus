@@ -1,14 +1,14 @@
 // Interactive chatbot with appointment booking functionality
 (function () {
-    // Dialog state management
     let dialogState = 'idle';
     let currentData = {};
-    
-    // API base URL
     const API_BASE = '../../backend/api/';
-    
-    // DOM elements (will be initialized when DOM is ready)
     let input, sendBtn, chat;
+    
+    // Utility: scroll to bottom
+    function scrollToBottom() {
+        setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
+    }
     
     // Handle menu section navigation
     function handleMenuSection(section) {
@@ -58,73 +58,42 @@
     }
 
     function appendUserBubble(text) {
+        const avatarSrc = window.userData?.picture || 'https://i.pravatar.cc/80?img=12';
         const wrap = document.createElement('div');
         wrap.className = 'bubble user';
-        
-        // Use user's photo from PHP or fallback to existing avatar
-        const avatarSrc = (window.userData && window.userData.picture) || 
-                         (document.querySelector('.bubble.user .avatar')?.src) || 
-                         'https://i.pravatar.cc/80?img=12';
-        
-        wrap.innerHTML = '<div class="content"></div>' +
-            `<img class="avatar" src="${avatarSrc}" alt="User"/>`;
+        wrap.innerHTML = `<div class="content"></div><img class="avatar" src="${avatarSrc}" alt="User"/>`;
         wrap.querySelector('.content').textContent = text;
         chat.appendChild(wrap);
-        chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+        scrollToBottom();
     }
 
     function appendBotBubble(text, buttons = []) {
         const wrap = document.createElement('div');
         wrap.className = 'bubble bot';
-        wrap.innerHTML = '<div class="content"></div>' +
-            '<img class="agent" src="../assets/images/logo.png" alt="Agent"/>';
+        wrap.innerHTML = '<div class="content"></div><img class="agent" src="../assets/images/logo.png" alt="Agent"/>';
         
         const content = wrap.querySelector('.content');
         content.textContent = text;
         
-        if (buttons.length > 0) {
-            const buttonContainer = document.createElement('div');
-            buttonContainer.className = 'button-container';
-            buttonContainer.style.marginTop = '10px';
-            buttonContainer.style.display = 'flex';
-            buttonContainer.style.flexWrap = 'wrap';
-            buttonContainer.style.gap = '8px';
+        if (buttons.length) {
+            const container = document.createElement('div');
+            container.className = 'button-container';
+            Object.assign(container.style, { marginTop: '10px', display: 'flex', flexWrap: 'wrap', gap: '8px' });
             
             buttons.forEach(button => {
                 const btn = document.createElement('button');
                 btn.className = 'action-btn';
                 btn.textContent = button.text;
-                btn.style.cssText = `
-                    background: #e8f0fe;
-                    border: 1px solid #dadce0;
-                    border-radius: 8px;
-                    padding: 8px 12px;
-                    font-size: 14px;
-                    cursor: pointer;
-                    transition: background 0.2s;
-                `;
-                btn.addEventListener('click', () => button.action());
-                buttonContainer.appendChild(btn);
+                btn.style.cssText = 'background:#e8f0fe;border:1px solid #dadce0;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer;transition:background 0.2s';
+                btn.onclick = button.action;
+                container.appendChild(btn);
             });
             
-            content.appendChild(buttonContainer);
+            content.appendChild(container);
         }
         
         chat.appendChild(wrap);
-        setTimeout(() => {
-            const scrollHeight = Math.max(
-                document.body.scrollHeight,
-                document.documentElement.scrollHeight,
-                document.body.offsetHeight,
-                document.documentElement.offsetHeight,
-                document.body.clientHeight,
-                document.documentElement.clientHeight
-            );
-            window.scrollTo({
-                top: scrollHeight,
-                behavior: 'smooth'
-            });
-        }, 100);
+        scrollToBottom();
     }
 
     function showMainMenu() {
@@ -333,96 +302,113 @@
         });
     }
 
+    function processMessage(text, context = {}) {
+        return fetch(API_BASE + '../AI/api/process_message.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: text, context })
+        })
+        .then(response => response.json())
+        .catch(error => {
+            console.error('Message processing error:', error);
+            return { success: false, intent: 'general', entities: {} };
+        });
+    }
+
     function handleSend() {
-        const text = (input.value || '').trim();
+        const text = input.value.trim();
         if (!text) return;
         
         appendUserBubble(text);
         input.value = '';
-        
-        // Auto scroll to bottom after sending message
-        setTimeout(() => {
-            const scrollHeight = Math.max(
-                document.body.scrollHeight,
-                document.documentElement.scrollHeight,
-                document.body.offsetHeight,
-                document.documentElement.offsetHeight,
-                document.body.clientHeight,
-                document.documentElement.clientHeight
-            );
-            window.scrollTo({
-                top: scrollHeight,
-                behavior: 'smooth'
-            });
-        }, 100);
 
-        switch (dialogState) {
-            case 'searching_tutor':
-                searchTutors(text);
-                break;
-            default:
-                // Handle natural language or show main menu
-                if (text.toLowerCase().includes('tutor') || text.toLowerCase().includes('find')) {
-                    startTutorSearch();
-                } else if (text.toLowerCase().includes('booking') || text.toLowerCase().includes('appointment')) {
-                    showMyBookings();
-                } else {
-                    appendBotBubble('I didn\'t understand that. Please use the menu buttons or try "find tutor" or "my bookings".');
-                    showMainMenu();
-                }
+        // Special handling for active dialog states
+        if (dialogState === 'searching_tutor') {
+            searchTutors(text);
+            return;
+        }
+
+        // Process message with AI
+        processMessage(text, currentData).then(result => {
+            if (!result.success) return handleFallback(text);
+            
+            console.log(`Intent: ${result.intent} (confidence: ${result.confidence})`);
+            console.log('Entities:', result.entities);
+            
+            // Store entities in current data
+            if (result.entities) {
+                Object.assign(currentData, result.entities);
+            }
+            
+            // Check if AI needs clarification
+            if (result.needs_clarification) {
+                appendBotBubble(result.response.message);
+                return;
+            }
+            
+            // Execute action based on intent and extracted entities
+            handleAIAction(result);
+        });
+    }
+    
+    function handleAIAction(result) {
+        const intent = result.intent;
+        const entities = result.entities || {};
+        
+        if (intent === 'search_tutor') {
+            // If we have a subject or tutor name, search directly
+            if (entities.subject || entities.tutor_name) {
+                const query = entities.subject || entities.tutor_name;
+                searchTutors(query);
+            } else {
+                startTutorSearch();
+            }
+        }
+        else if (intent === 'view_bookings') {
+            showMyBookings();
+        }
+        else if (intent === 'cancel_booking') {
+            startCancelBooking();
+        }
+        else {
+            handleFallback();
         }
     }
-
-    // Initialize chatbot
-    function init() {
-        console.log('🎯 Initializing chatbot...');
+    
+    function handleFallback(text = '') {
+        const lower = text.toLowerCase();
+        if (lower.includes('tutor') || lower.includes('find')) return startTutorSearch();
+        if (lower.includes('booking') || lower.includes('appointment')) return showMyBookings();
+        
+        appendBotBubble('I didn\'t understand that. Please use the menu buttons or try "find tutor" or "my bookings".');
         showMainMenu();
-        console.log('✅ Main menu shown');
-        
-        // Initialize popup menu with custom handler
-        if (window.PopupMenu) {
-            window.popupMenu = new PopupMenu({
-                onSectionChange: handleMenuSection
-            });
-            console.log('✅ Popup menu initialized');
-        } else {
-            console.warn('⚠️ PopupMenu class not found');
-        }
     }
 
-    // Initialize when DOM is ready
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 DOM loaded, initializing chatbot...');
-        
-        // Initialize DOM elements
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
         input = document.getElementById('messageInput');
         sendBtn = document.getElementById('sendBtn');
         chat = document.querySelector('.chat');
         
-        console.log('📋 DOM elements:', { input, sendBtn, chat });
-        
-        // Check if elements exist
         if (!input || !sendBtn || !chat) {
-            console.error('❌ Required DOM elements not found:', { input, sendBtn, chat });
+            console.error('Required DOM elements not found');
             return;
         }
         
-        console.log('✅ All DOM elements found');
-        
-        // Event listeners
         sendBtn.addEventListener('click', handleSend);
-        input.addEventListener('keydown', function (e) {
+        input.addEventListener('keydown', e => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 handleSend();
             }
         });
 
-        // Load user data first
         loadUserData();
+        showMainMenu();
         
-        // Start the chatbot
-        init();
+        if (window.PopupMenu) {
+            window.popupMenu = new PopupMenu({ onSectionChange: handleMenuSection });
+        }
     });
 })();
 
