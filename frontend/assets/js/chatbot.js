@@ -2,7 +2,7 @@
 (function () {
     let dialogState = 'idle';
     let currentData = {};
-    const API_BASE = '../../backend/api/';
+    const API_BASE = window.CONFIG ? window.CONFIG.API_BASE : '../../backend/api/';
     let input, sendBtn, chat;
     
     // Utility: scroll to bottom

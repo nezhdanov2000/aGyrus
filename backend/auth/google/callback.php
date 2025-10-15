@@ -56,8 +56,8 @@ if (isset($tokenData['access_token'])) {
         'picture' => $userInfo['picture']
     ];
     
-    // Redirect to chatbot landing after authentication
-    header('Location: /frontend/html/chat.html');
+    // Redirect to chatbot landing after authentication (relative path)
+    header('Location: ../../../frontend/html/chat.html');
     exit;
 } else {
     die('Failed to get access token');

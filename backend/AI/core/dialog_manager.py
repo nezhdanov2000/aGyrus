@@ -8,8 +8,7 @@ import json
 import sys
 from typing import Dict, Any, Optional, List
 from pathlib import Path
-import pickle
-from intent_classifier import load_model, predict_intent, preprocess_text
+from intent_classifier import load_model, predict_intent
 from entity_extractor import extract_entities_from_message
 
 
@@ -20,11 +19,7 @@ class DialogManager:
         # Load intent classifier model
         script_dir = Path(__file__).parent
         model_path = (script_dir / '..' / 'models' / 'intent_model_logistic.pkl').resolve()
-        
-        if model_path.exists():
-            self.intent_model = load_model('logistic', str(model_path))
-        else:
-            self.intent_model = None
+        self.intent_model = load_model('logistic', str(model_path))
     
     def process_message(self, user_message: str, context: Optional[Dict] = None) -> Dict[str, Any]:
         """
@@ -35,7 +30,7 @@ class DialogManager:
             context: Optional context from previous conversation
         
         Returns:
-            Dict with: intent, entities, response, actions, needs_clarification
+            Dict with: intent, confidence, entities, context, missing_info, response, needs_clarification
         """
         if context is None:
             context = {}
@@ -69,29 +64,12 @@ class DialogManager:
     
     def _predict_intent(self, text: str) -> Dict[str, Any]:
         """Predict intent using ML model"""
-        if self.intent_model:
-            return predict_intent(self.intent_model, text)
-        else:
-            # Fallback to keyword matching
-            return self._fallback_intent(text)
-    
-    def _fallback_intent(self, text: str) -> Dict[str, Any]:
-        """Fallback intent detection using keywords"""
-        text_lower = text.lower()
-        
-        if any(word in text_lower for word in ['find', 'search', 'looking']):
-            return {'intent': 'search_tutor', 'confidence': 0.7}
-        
-        if any(word in text_lower for word in ['booking', 'appointment', 'schedule']):
-            # Check if it's cancellation
-            if any(word in text_lower for word in ['cancel', 'delete', 'remove']):
-                return {'intent': 'cancel_booking', 'confidence': 0.7}
-            return {'intent': 'view_bookings', 'confidence': 0.7}
-        
-        if any(word in text_lower for word in ['cancel']):
-            return {'intent': 'cancel_booking', 'confidence': 0.7}
-        
-        return {'intent': 'general', 'confidence': 0.5}
+        result = predict_intent(self.intent_model, text)
+        # Ensure consistent return format
+        return {
+            'intent': str(result['intent']),
+            'confidence': float(result['confidence'])
+        }
     
     def _check_missing_info(self, intent: str, entities: Dict) -> List[str]:
         """Check what information is missing for the intent"""

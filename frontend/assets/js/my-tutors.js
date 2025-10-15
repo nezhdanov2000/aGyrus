@@ -1,5 +1,5 @@
 (function(){
-    const API_BASE = '/backend/api/';
+    const API_BASE = window.CONFIG ? window.CONFIG.API_BASE : '/backend/api/';
     let listEl, floatingEl, closeFloatingBtn, notifyBtn, cancelAllBtn;
     let tutors = [];
 

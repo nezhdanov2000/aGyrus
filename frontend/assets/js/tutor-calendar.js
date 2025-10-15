@@ -1,6 +1,6 @@
 (function(){
     // Reuse calendar logic but filter by tutor_id from URL
-    const API_BASE = '/backend/api/';
+    const API_BASE = window.CONFIG ? window.CONFIG.API_BASE : '/backend/api/';
     let currentWeekStart = new Date();
     let calendarData = {};
     let myBookingsByTimeslotId = new Set();

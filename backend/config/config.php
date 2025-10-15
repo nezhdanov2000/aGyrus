@@ -1,8 +1,15 @@
 <?php
+// Dynamic base URL detection
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'];
+$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+$baseUrl = $protocol . '://' . $host;
+
 // Google OAuth Configuration
 define('GOOGLE_CLIENT_ID', '731314897697-cus8dmpsc44gsfsqteetbp4bu0vlpa9o.apps.googleusercontent.com');
 define('GOOGLE_CLIENT_SECRET', 'YOUR_GOOGLE_CLIENT_SECRET');
-define('GOOGLE_REDIRECT_URI', 'http://localhost/backend/auth/google/callback.php');
+// Dynamic redirect URI based on current server
+define('GOOGLE_REDIRECT_URI', $baseUrl . '/backend/auth/google/callback.php');
 
 // Session configuration
 session_start();

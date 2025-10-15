@@ -10,7 +10,7 @@
     let currentStudentId = null;
     
     // API base URL
-    const API_BASE = '/backend/api/';
+    const API_BASE = window.CONFIG ? window.CONFIG.API_BASE : '/backend/api/';
     
     // DOM elements
     let monthTitle, calendarGrid, prevMonthBtn, nextMonthBtn, clearAllBtn;

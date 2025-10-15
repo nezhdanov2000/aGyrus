@@ -1,5 +1,5 @@
 (function() {
-    const API_BASE = '/backend/api/';
+    const API_BASE = window.CONFIG ? window.CONFIG.API_BASE : '/backend/api/';
     
     async function init() {
         if (window.PopupMenu) {
