@@ -406,6 +406,7 @@
         loadUserData();
         showMainMenu();
         
+        // Initialize menu
         if (window.PopupMenu) {
             window.popupMenu = new PopupMenu({ onSectionChange: handleMenuSection });
         }

@@ -12,8 +12,12 @@
     
     async function loadUserData() {
         try {
-            const response = await fetch(`${API_BASE}get-user.php`);
+            console.log('Loading user data from:', `${API_BASE}get-user.php`);
+            const response = await fetch(`${API_BASE}get-user.php`, {
+                credentials: 'include'
+            });
             const data = await response.json();
+            console.log('User data response:', data);
             
             if (data.success && data.user) {
                 const user = data.user;
@@ -21,7 +25,7 @@
                 const photoElement = document.getElementById('userPhoto');
                 
                 // Set user name
-                const fullName = `${user.name || ''} ${user.surname || ''}`.trim() || 'User';
+                const fullName = user.nickname || user.name || 'User';
                 nameElement.textContent = fullName;
                 
                 // Set user photo (Google photo if available)
@@ -42,8 +46,12 @@
     
     async function loadStatistics() {
         try {
-            const response = await fetch(`${API_BASE}my-bookings.php`);
+            console.log('Loading statistics from:', `${API_BASE}my-bookings.php`);
+            const response = await fetch(`${API_BASE}my-bookings.php`, {
+                credentials: 'include'
+            });
             const data = await response.json();
+            console.log('Statistics response:', data);
             
             if (data.success && data.bookings) {
                 const bookings = data.bookings;

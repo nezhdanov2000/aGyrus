@@ -28,14 +28,15 @@ try {
     
     // Get available dates for tutor
     $stmt = $pdo->prepare("
-        SELECT DISTINCT t.date, 
+        SELECT DISTINCT bt.date, 
                COUNT(t.timeslot_id) as available_slots
         FROM timeslot t
+        JOIN base_timeslot bt ON t.base_timeslot_id = bt.base_timeslot_id
         WHERE t.tutor_id = ? 
         AND t.status = 'available' 
-        AND t.date >= CURDATE()
-        GROUP BY t.date
-        ORDER BY t.date
+        AND bt.date >= CURDATE()
+        GROUP BY bt.date
+        ORDER BY bt.date
     ");
     
     $stmt->execute([$tutorId]);

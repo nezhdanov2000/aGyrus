@@ -8,7 +8,7 @@
 const CONFIG = {
     // Base URL for API endpoints
     // Use relative paths for portability
-    API_BASE: '../../backend/api/',
+    API_BASE: '/backend/api/',
     
     // Alternative: Use localhost for local development
     // API_BASE: 'http://localhost/backend/api/',

@@ -21,7 +21,7 @@ try {
     $sql = "
         SELECT 
             t.timeslot_id,
-            t.date,
+            bt.date,
             t.status,
             bt.day_of_week,
             bt.start_time,
@@ -31,16 +31,15 @@ try {
             c.course_name,
             b.booking_id,
             b.student_id,
-            s.name as student_name,
-            s.surname as student_surname
+            s.nickname as student_nickname
         FROM timeslot t
         JOIN base_timeslot bt ON t.base_timeslot_id = bt.base_timeslot_id
         JOIN tutor tu ON t.tutor_id = tu.tutor_id
         LEFT JOIN booking b ON t.timeslot_id = b.timeslot_id
         LEFT JOIN student s ON b.student_id = s.student_id
         LEFT JOIN course c ON t.course_id = c.course_id
-        WHERE YEAR(t.date) = :year AND MONTH(t.date) = :month" . ($tutorId > 0 ? "\n        AND t.tutor_id = :tutor_id" : "") . "
-        ORDER BY t.date, bt.start_time
+        WHERE YEAR(bt.date) = :year AND MONTH(bt.date) = :month" . ($tutorId > 0 ? "\n        AND t.tutor_id = :tutor_id" : "") . "
+        ORDER BY bt.date, bt.start_time
     ";
 
     $stmt = $pdo->prepare($sql);
@@ -64,7 +63,7 @@ try {
             'is_booked' => !empty($ts['booking_id']),
             'booking_id' => $ts['booking_id'],
             'student_id' => $ts['student_id'],
-            'student_name' => $ts['student_name'] ? $ts['student_name'] . ' ' . $ts['student_surname'] : null
+            'student_nickname' => $ts['student_nickname']
         ];
     }
 

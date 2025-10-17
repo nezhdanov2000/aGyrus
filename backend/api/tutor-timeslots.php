@@ -35,11 +35,11 @@ try {
     
     // Get available timeslots for specific date
     $stmt = $pdo->prepare("
-        SELECT t.timeslot_id, t.date, bt.start_time, bt.end_time, bt.day_of_week
+        SELECT t.timeslot_id, bt.date, bt.start_time, bt.end_time, bt.day_of_week
         FROM timeslot t
         JOIN base_timeslot bt ON t.base_timeslot_id = bt.base_timeslot_id
         WHERE t.tutor_id = ? 
-        AND t.date = ? 
+        AND bt.date = ? 
         AND t.status = 'available'
         ORDER BY bt.start_time
     ");

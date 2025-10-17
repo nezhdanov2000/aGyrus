@@ -31,7 +31,7 @@ try {
     
     // Check if timeslot is still available
     $stmt = $pdo->prepare("
-        SELECT t.timeslot_id, t.status, t.tutor_id, bt.start_time, bt.end_time, t.date
+        SELECT t.timeslot_id, t.status, t.tutor_id, bt.start_time, bt.end_time, bt.date
         FROM timeslot t
         JOIN base_timeslot bt ON t.base_timeslot_id = bt.base_timeslot_id
         WHERE t.timeslot_id = ? AND t.status = 'available'

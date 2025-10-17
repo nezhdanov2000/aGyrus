@@ -24,7 +24,7 @@ try {
     // Get user's bookings (only active bookings exist in DB)
     $stmt = $pdo->prepare("
         SELECT b.booking_id, b.booking_date,
-               t.timeslot_id, t.tutor_id, t.date, bt.start_time, bt.end_time,
+               t.timeslot_id, t.tutor_id, bt.date, bt.start_time, bt.end_time,
                tu.name as tutor_name, tu.surname as tutor_surname, tu.photo_link,
                c.course_name
         FROM booking b
@@ -33,7 +33,7 @@ try {
         JOIN tutor tu ON t.tutor_id = tu.tutor_id
         JOIN course c ON t.course_id = c.course_id
         WHERE b.student_id = ?
-        ORDER BY t.date, bt.start_time
+        ORDER BY bt.date, bt.start_time
     ");
     
     $stmt->execute([$studentId]);

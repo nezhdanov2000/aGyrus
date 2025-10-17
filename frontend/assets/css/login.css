@@ -43,50 +43,165 @@ h1 {
     margin-bottom: 28px;
 }
 
-.buttons {
-    display: grid;
-    gap: 14px;
+/* Auth toggle styles */
+.auth-toggle {
+    display: flex;
+    background: rgba(0,0,0,0.08);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 24px;
 }
 
-.btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 14px 16px;
-    border-radius: 12px;
+.toggle-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
     font-weight: 600;
-    text-decoration: none;
-    border: 1px solid rgba(0,0,0,0.08);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.btn svg {
-    width: 20px;
-    height: 20px;
-}
-
-.btn-fb {
-    background: #1877f2;
-    color: #fff;
-    border-color: transparent;
-}
-
-.btn-google {
+.toggle-btn.active {
     background: #fff;
-    color: #3c4043;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.btn-apple {
-    background: #000;
+.toggle-btn:hover:not(.active) {
+    color: #333;
+}
+
+/* Form styles */
+.auth-form {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.auth-form.hidden {
+    display: none;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-form input {
+    padding: 14px 16px;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 12px;
+    font-size: 16px;
+    background: #fff;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.auth-form input:focus {
+    border-color: #007AFF;
+    box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+}
+
+.auth-form input::placeholder {
+    color: #999;
+}
+
+.btn-primary {
+    background: #007AFF;
     color: #fff;
-    border-color: transparent;
+    border: 1px solid #007AFF;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #0056CC;
+    border-color: #0056CC;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,122,255,0.3);
+}
+
+/* Message styles */
+.error-message, .success-message {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    animation: slideIn 0.3s ease;
+}
+
+.error-message {
+    background: #FFEBEE;
+    color: #C62828;
+    border: 1px solid #FFCDD2;
+}
+
+.success-message {
+    background: #E8F5E8;
+    color: #2E7D32;
+    border: 1px solid #C8E6C9;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Legacy button styles removed - using new form styles */
+
+/* Ensure forms are properly styled */
+.auth-form {
+    display: grid !important;
+    gap: 16px !important;
+    margin-bottom: 20px !important;
+}
+
+.auth-form.hidden {
+    display: none !important;
+}
+
+/* Ensure toggle works */
+.auth-toggle {
+    display: flex !important;
+    background: rgba(0,0,0,0.08) !important;
+    border-radius: 12px !important;
+    padding: 4px !important;
+    margin-bottom: 24px !important;
+}
+
+.toggle-btn {
+    flex: 1 !important;
+    padding: 12px 16px !important;
+    border: none !important;
+    background: transparent !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    color: #666 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.toggle-btn.active {
+    background: #fff !important;
+    color: #333 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
 }
 
 .footer {
