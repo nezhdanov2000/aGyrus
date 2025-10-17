@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Send login request
-        fetch('../../backend/api/login.php', {
+        fetch((window.CONFIG ? window.CONFIG.API_BASE : '/backend/api/') + 'auth/login.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Send registration request
-        fetch('../../backend/api/register.php', {
+        fetch((window.CONFIG ? window.CONFIG.API_BASE : '/backend/api/') + 'auth/register.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

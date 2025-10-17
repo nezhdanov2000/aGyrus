@@ -87,9 +87,8 @@ class PopupMenu {
     
     handleExit() {
         console.log('🚪 Exit button clicked');
-        // Redirect to logout endpoint
-        const apiBase = window.CONFIG ? window.CONFIG.API_BASE : '../../backend/api/';
-        window.location.href = apiBase + 'logout.php';
+        // Redirect to home page
+        window.location.href = '../../frontend/html/index.html';
     }
     
     handleMenuItemClick(item) {

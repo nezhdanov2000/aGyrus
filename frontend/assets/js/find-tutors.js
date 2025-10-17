@@ -22,7 +22,7 @@
         results.innerHTML = '';
         if(!q){ return; }
         try{
-            const res = await fetch(`${API_BASE}search-tutors.php`, {
+            const res = await fetch(`${API_BASE}tutor/search-tutors.php`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: q })

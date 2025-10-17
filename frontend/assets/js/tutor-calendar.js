@@ -31,9 +31,9 @@
         const year = currentWeekStart.getFullYear();
         try{
             const [calRes, myRes, userRes] = await Promise.all([
-                fetch(`${API_BASE}tutor-calendar.php?month=${month+1}&year=${year}&tutor_id=${tutorId}`),
-                fetch(`${API_BASE}my-bookings.php`),
-                fetch(`${API_BASE}get-user.php`)
+                fetch(`${API_BASE}tutor/tutor-calendar.php?month=${month+1}&year=${year}&tutor_id=${tutorId}`),
+                fetch(`${API_BASE}booking/my-bookings.php`),
+                fetch(`${API_BASE}auth/get-user.php`)
             ]);
             const data = await calRes.json();
             const my = await myRes.json().catch(()=>null);
@@ -132,7 +132,8 @@
                 <div class="timeslot-time">${ts.start_time} / ${ts.end_time}</div>
                 <div class="timeslot-tutor">👨‍🏫 ${ts.tutor_name}</div>
                 <div class="timeslot-course">📚 ${ts.course_name || 'No course'}</div>
-            ` + (!isMine && ts.is_booked ? `<div class="timeslot-student">👤 ${ts.student_name}</div>` : '');
+            ` + (!isMine && ts.is_booked ? `<div class="timeslot-student">👤 ${ts.student_nickname || 'Unknown'}</div>` : '') +
+            (isMine && ts.repeatability === 'repeated' ? `<div class="timeslot-recurring">🔄 Recurring</div>` : '');
             el.addEventListener('click', ()=> handleTimeslotClick(dateKey, ts));
             timeslotsContainer.appendChild(el);
         });
@@ -147,13 +148,42 @@
         const isMine = myBookingsByTimeslotId.has(Number(ts.timeslot_id)) || (currentStudentId && Number(ts.student_id) === currentStudentId);
         
         if (isMine && ts.booking_id) {
-            // Cancel my booking
+            // Check if it's a recurring booking
+            if (ts.repeatability === 'repeated') {
+                const cancelAll = confirm(`Cancel recurring booking?\n${dateKey}\n${ts.start_time} - ${ts.end_time}\n${ts.tutor_name}\n\nOK = Cancel ALL future recurring bookings\nCancel = Cancel only this one`);
+                
+                if (cancelAll) {
+                    // Cancel all recurring bookings
+                    try {
+                        const response = await fetch(`${API_BASE}recurring/cancel-recurring.php`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ timeslot_id: ts.timeslot_id })
+                        });
+
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            alert(`Cancelled ${result.cancelled_count} recurring bookings!`);
+                            await loadCalendarData();
+                            renderCalendar();
+                        } else {
+                            alert(`Cancellation failed: ${result.error}`);
+                        }
+                    } catch (error) {
+                        alert('Network error. Please try again.');
+                    }
+                    return;
+                }
+            }
+            
+            // Cancel single booking
             if (!confirm(`Cancel this booking?\n${dateKey}\n${ts.start_time} - ${ts.end_time}\n${ts.tutor_name}`)) {
                 return;
             }
 
             try {
-                const response = await fetch(`${API_BASE}cancel-booking.php`, {
+                const response = await fetch(`${API_BASE}booking/cancel-booking.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ booking_id: ts.booking_id })
@@ -163,7 +193,6 @@
                 
                 if (result.success) {
                     alert('Booking cancelled successfully!');
-                    // Reload calendar data to show updated status
                     await loadCalendarData();
                     renderCalendar();
                 } else {
@@ -177,26 +206,42 @@
 
         // Only allow booking available timeslots
         if (ts.is_booked) {
-            alert(`This timeslot is already booked by ${ts.student_name}`);
+            alert(`This timeslot is already booked by ${ts.student_nickname || 'Unknown'}`);
             return;
         }
 
-        // Confirm booking
-        if (!confirm(`Book this timeslot?\n${dateKey}\n${ts.start_time} - ${ts.end_time}\n${ts.tutor_name}`)) {
-            return;
+        // Show booking options
+        const bookingType = confirm(`Book this timeslot?\n${dateKey}\n${ts.start_time} - ${ts.end_time}\n${ts.tutor_name}\n\nClick OK for one-time booking\nClick Cancel to choose booking type`);
+        
+        if (bookingType === null) {
+            return; // User cancelled
         }
+        
+        // Ask for booking type
+        const isRecurring = confirm(`Choose booking type:\n\nOK = Recurring (auto-book similar timeslots)\nCancel = One-time booking`);
 
         try {
-            const response = await fetch(`${API_BASE}book-timeslot.php`, {
+            const response = await fetch(`${API_BASE}booking/book-timeslot.php`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ timeslot_id: ts.timeslot_id })
+                body: JSON.stringify({ 
+                    timeslot_id: ts.timeslot_id,
+                    recurring: isRecurring
+                })
             });
 
             const result = await response.json();
             
             if (result.success) {
-                alert('Successfully booked!');
+                let message = result.recurring ? 
+                    'Recurring booking created! You will be automatically booked for similar timeslots.' :
+                    'Successfully booked!';
+                
+                if (result.existing_count > 0) {
+                    message += `\n\nAlso automatically booked ${result.existing_count} existing matching timeslots!`;
+                }
+                
+                alert(message);
                 // Reload calendar data to show updated booking
                 await loadCalendarData();
                 renderCalendar();

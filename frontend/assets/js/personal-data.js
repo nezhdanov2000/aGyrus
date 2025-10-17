@@ -12,8 +12,8 @@
     
     async function loadUserData() {
         try {
-            console.log('Loading user data from:', `${API_BASE}get-user.php`);
-            const response = await fetch(`${API_BASE}get-user.php`, {
+            console.log('Loading user data from:', `${API_BASE}auth/get-user.php`);
+            const response = await fetch(`${API_BASE}auth/get-user.php`, {
                 credentials: 'include'
             });
             const data = await response.json();
@@ -46,8 +46,8 @@
     
     async function loadStatistics() {
         try {
-            console.log('Loading statistics from:', `${API_BASE}my-bookings.php`);
-            const response = await fetch(`${API_BASE}my-bookings.php`, {
+            console.log('Loading statistics from:', `${API_BASE}booking/my-bookings.php`);
+            const response = await fetch(`${API_BASE}booking/my-bookings.php`, {
                 credentials: 'include'
             });
             const data = await response.json();

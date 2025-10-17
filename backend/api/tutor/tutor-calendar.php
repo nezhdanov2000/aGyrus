@@ -1,12 +1,7 @@
 <?php
-require_once '../config/config.php';
+require_once '../../config/config.php';
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { exit(0); }
 
 try {
     $pdo = getPDO();
@@ -23,6 +18,7 @@ try {
             t.timeslot_id,
             bt.date,
             t.status,
+            t.repeatability,
             bt.day_of_week,
             bt.start_time,
             bt.end_time,
@@ -58,6 +54,7 @@ try {
             'start_time' => $ts['start_time'],
             'end_time' => $ts['end_time'],
             'status' => $ts['status'],
+            'repeatability' => $ts['repeatability'],
             'tutor_name' => $ts['tutor_name'] . ' ' . $ts['tutor_surname'],
             'course_name' => $ts['course_name'],
             'is_booked' => !empty($ts['booking_id']),
@@ -67,11 +64,17 @@ try {
         ];
     }
 
-    echo json_encode(['success'=>true,'month'=>$month,'year'=>$year,'data'=>$calendarData]);
+    echo json_encode([
+        'success' => true,
+        'month' => $month,
+        'year' => $year,
+        'data' => $calendarData
+    ]);
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage()
+    ]);
 }
 ?>
-
-

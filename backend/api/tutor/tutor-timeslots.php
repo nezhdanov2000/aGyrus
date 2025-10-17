@@ -1,14 +1,8 @@
 <?php
-require_once '../config/config.php';
+require_once '../../config/config.php';
+require_once '../auth/auth-check.php';
 
 header('Content-Type: application/json');
-
-// Check if user is logged in
-if (!isset($_SESSION['user']) || !isset($_SESSION['user']['student_id'])) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Not authenticated']);
-    exit;
-}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     http_response_code(405);

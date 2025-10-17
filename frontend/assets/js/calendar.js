@@ -42,9 +42,9 @@
         try {
             // Fetch month calendar and student's bookings in parallel
             const [calRes, myRes, userRes] = await Promise.all([
-                fetch(`${API_BASE}tutor-calendar.php?month=${month + 1}&year=${year}`),
-                fetch(`${API_BASE}my-bookings.php`),
-                fetch(`${API_BASE}get-user.php`)
+                fetch(`${API_BASE}tutor/tutor-calendar.php?month=${month + 1}&year=${year}`),
+                fetch(`${API_BASE}booking/my-bookings.php`),
+                fetch(`${API_BASE}auth/get-user.php`)
             ]);
             const data = await calRes.json();
             let my = null;

@@ -13,7 +13,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Check authentication first
-            fetch('../../backend/api/get-user.php')
+            fetch((window.CONFIG ? window.CONFIG.API_BASE : '/backend/api/') + 'auth/get-user.php')
                 .then(response => response.json())
                 .then(data => {
                     if (!data.success) {
@@ -31,7 +31,7 @@
             const exitBtn = document.getElementById('exitBtn');
             if (exitBtn) {
                 exitBtn.addEventListener('click', function() {
-                    window.location.href = (window.CONFIG ? window.CONFIG.API_BASE : '../../backend/api/') + 'logout.php';
+                    window.location.href = '../../frontend/html/index.html';
                 });
             }
         });

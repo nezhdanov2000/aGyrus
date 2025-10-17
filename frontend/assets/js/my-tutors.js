@@ -22,7 +22,7 @@
             // Cancel all bookings for all tutors
             const bookings = await fetchMyBookings();
             for (const b of bookings){
-                await fetch(`${API_BASE}cancel-booking.php`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ booking_id: b.booking_id })});
+                await fetch(`${API_BASE}booking/cancel-booking.php`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ booking_id: b.booking_id })});
             }
             await loadTutors();
             render();
@@ -32,7 +32,7 @@
 
     async function fetchMyBookings(){
         try{
-            const res = await fetch(`${API_BASE}my-bookings.php`);
+            const res = await fetch(`${API_BASE}booking/my-bookings.php`);
             const data = await res.json();
             if (data && data.success) return data.bookings || [];
         }catch(e){}
@@ -89,7 +89,7 @@
             const bookings = await fetchMyBookings();
             const mine = bookings.filter(b => Number(b.tutor_id) === Number(t.tutor_id));
             for (const b of mine){
-                await fetch(`${API_BASE}cancel-booking.php`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ booking_id: b.booking_id })});
+                await fetch(`${API_BASE}booking/cancel-booking.php`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ booking_id: b.booking_id })});
             }
             await loadTutors();
             render();

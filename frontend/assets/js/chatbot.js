@@ -36,7 +36,7 @@
     
     // Load user data on page load
     function loadUserData() {
-        fetch(API_BASE + 'get-user.php')
+        fetch(API_BASE + 'auth/get-user.php')
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -114,7 +114,7 @@
     }
 
     function searchTutors(query) {
-        fetch(API_BASE + 'search-tutors.php', {
+        fetch(API_BASE + 'tutor/search-tutors.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query })
@@ -148,7 +148,7 @@
         dialogState = 'selecting_date';
         appendUserBubble(`${tutor.name} ${tutor.surname}`);
         
-        fetch(API_BASE + `tutor-dates.php?tutor_id=${tutor.tutor_id}`)
+        fetch(API_BASE + `tutor/tutor-dates.php?tutor_id=${tutor.tutor_id}`)
         .then(response => response.json())
         .then(data => {
             if (data.success && data.dates.length > 0) {
@@ -175,7 +175,7 @@
         dialogState = 'selecting_timeslot';
         appendUserBubble(date);
         
-        fetch(API_BASE + `tutor-timeslots.php?tutor_id=${currentData.selectedTutor.tutor_id}&date=${date}`)
+        fetch(API_BASE + `tutor/tutor-timeslots.php?tutor_id=${currentData.selectedTutor.tutor_id}&date=${date}`)
         .then(response => response.json())
         .then(data => {
             if (data.success && data.timeslots.length > 0) {
@@ -200,7 +200,7 @@
     function bookTimeslot(timeslot) {
         appendUserBubble(`${timeslot.start_time} - ${timeslot.end_time}`);
         
-        fetch(API_BASE + 'book-timeslot.php', {
+        fetch(API_BASE + 'booking/book-timeslot.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -229,7 +229,7 @@
     function showMyBookings(showCancelButtons = false) {
         appendUserBubble('My Bookings');
         
-        fetch(API_BASE + 'my-bookings.php')
+        fetch(API_BASE + 'booking/my-bookings.php')
         .then(response => response.json())
         .then(data => {
             if (data.success && data.bookings.length > 0) {
@@ -276,7 +276,7 @@
     function cancelBooking(bookingId, booking) {
         appendUserBubble(`Cancel ${booking.date} ${booking.start_time}`);
         
-        fetch(API_BASE + 'cancel-booking.php', {
+        fetch(API_BASE + 'booking/cancel-booking.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ booking_id: bookingId })
